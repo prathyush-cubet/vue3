@@ -1,16 +1,32 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+
+  <div>
+    <b-navbar toggleable="lg" type="dark" variant="info">
+    <b-navbar-brand href="#">Vue3</b-navbar-brand>
+
+    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+
+    <b-collapse id="nav-collapse" is-nav>
+    <b-navbar-nav>
+
+    <router-link class="col p-1" to="/products">Products</router-link>
+    <router-link class="col p-1" to="/users">Users</router-link>
+    <router-link class="col p-1" to="/example">Props&Emits</router-link>
+    </b-navbar-nav>
+
+    </b-collapse>
+    </b-navbar>
+  </div>
+
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
+  name: 'App'
 }
 </script>
 
@@ -21,6 +37,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+.active {
+  font-weight: 700;
+  color:#fff
 }
 </style>

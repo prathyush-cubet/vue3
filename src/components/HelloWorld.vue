@@ -1,40 +1,108 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <span><a href="#" @click.prevent="action='add'">Add Product</a></span>
+    <table v-show="action=='edit' || action=='add'">
+      <tr>
+        <td>Title</td><td><input type="text" v-model="product.title"/></td>
+        <td>Category</td><td><input type="text" v-model="product.category"/></td>
+        <td>Description</td><td><input type="text" v-model="product.description"/></td>
+      </tr>
+      <tr>
+        <td>Price</td><td><input type="text" v-model="product.price"/></td>
+        <td>Rating</td><td><input type="text" v-model="product.rating"/></td>
+        <td>Stock</td><td><input type="text" v-model="product.stock"/></td>
+        <td>Brand</td><td><input type="text" v-model="product.brand"/></td>
+      </tr>
+      <tr>
+        <td colspan="3">
+        <button type="submit" @click.prevent="action=='add' ? addProduct(): updateProduct()">{{ action=='add'? 'Add Product':'Update Product' }}</button>
+      </td>
+    </tr>
+    </table>
+    <table>
+      <tr>
+        <th>Title</th>
+        <th>Category</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Rating</th>
+        <th>Stock</th>
+        <th>Brand</th>
+      </tr>
+      <tr v-for="(product,index) in products" :key="product.id">
+        <td>{{ product.title }}</td>
+        <td>{{ product.category }}</td>
+        <td>{{ product.description }}</td>
+        <td>{{ product.price }}</td>
+        <td>{{ product.rating }}</td>
+        <td>{{ product.stock }}</td>
+        <td>{{ product.brand }}</td>
+        <td>
+          <a href="#" @click.prevent="editProduct(product)">Edit</a>&nbsp;
+          <a href="#" @click.prevent="deleteProduct(product, index)">Delete</a>
+        </td>
+      </tr>
+    </table>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data() {
+    return {
+      product: {},
+      products :[],
+      action:''
+    }
+  },
+  methods: {
+    getProducts(){
+      axios.get('https://dummyjson.com/products')
+      .then((result) => {
+        this.products = result.data.products;
+      }).catch((err) => {
+        console.log(err);
+      });
+    },
+    addProduct() {
+      axios.post('https://dummyjson.com/products/add', {
+        ...this.product
+      })
+      .then(() => {
+        this.products.unshift(this.product)
+      }).catch((err) => {
+        console.log(err);
+      });
+    },
+    editProduct(product) {
+      this.product = product;
+      this.action = 'edit';
+    },
+    updateProduct() {
+      axios.put('https://dummyjson.com/products/'+this.product.id, {
+        ...this.product
+      })
+      .then(() => {
+        this.products= this.products.map((item) => (item.id === this.product.id ? { ...item, ...this.product } : item))
+      }).catch((err) => {
+        console.log(err);
+      });
+    },
+    deleteProduct(product) {
+      if(confirm('Sure to delete?')) {
+        this.products = this.products.filter((prd) => {
+          return prd.id !== product.id
+        })
+      }
+    }
+  },
+  mounted() {
+    this.getProducts();
   }
 }
 </script>
