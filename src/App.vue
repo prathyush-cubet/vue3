@@ -13,6 +13,7 @@
     <router-link class="col p-1" to="/products">Products</router-link>
     <router-link class="col p-1" to="/users">Users</router-link>
     <router-link class="col p-1" to="/example">Props&Emits</router-link>
+    <router-link class="col p-1" to="/drag">Drag & Drop</router-link>
     </b-navbar-nav>
 
     </b-collapse>
