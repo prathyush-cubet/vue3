@@ -12,6 +12,10 @@
       {{ item }}
     </div>
     <button type="button" v-on:click="click()">Click</button>
+    <input type="text" v-on:keypress.enter="keypress" />
+    {{ isImportant }}
+    <br />
+    Watch changes in this box<input v-model="rangeVal" />
   </div>
 </template>
 
@@ -25,11 +29,26 @@ export default {
       model: "test",
       condition: true,
       items: [0, 1, 2, 3, 4, 5],
+      val: false,
+      rangeVal: 39,
     };
   },
   methods: {
     click() {
       alert("clicked");
+    },
+    keypress() {
+      alert("key pressed");
+    },
+  },
+  computed: {
+    isImportant() {
+      return this.val ? "Yes" : "No";
+    },
+  },
+  watch: {
+    rangeVal(newVal, oldVal) {
+      alert("new val=" + newVal + ", old val=" + oldVal);
     },
   },
 };
