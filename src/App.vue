@@ -8,6 +8,7 @@
 
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
+            <router-link class="col p-1" to="/">Directives</router-link>
             <router-link class="col p-1" to="/products">Products</router-link>
             <router-link class="col p-1" to="/users">Users</router-link>
             <router-link class="col p-1" to="/example">Props&Emits</router-link>
