@@ -5,21 +5,63 @@
       <table v-show="action == 'edit' || action == 'add'">
         <tr>
           <td>firstName</td>
-          <td><input type="text" v-model="user.firstName" /></td>
+          <td>
+            <input type="text" v-model="user.firstName" /><br /><small
+              v-if="error.firstName"
+              style="color: red"
+              >firstName requried</small
+            >
+          </td>
           <td>lastName</td>
-          <td><input type="text" v-model="user.lastName" /></td>
+          <td>
+            <input type="text" v-model="user.lastName" /><br /><small
+              v-if="error.lastName"
+              style="color: red"
+              >lastName requried</small
+            >
+          </td>
           <td>maidenName</td>
-          <td><input type="text" v-model="user.maidenName" /></td>
+          <td>
+            <input type="text" v-model="user.maidenName" /><br /><small
+              v-if="error.maidenName"
+              style="color: red"
+              >maidenName requried</small
+            >
+          </td>
         </tr>
         <tr>
           <td>age</td>
-          <td><input type="text" v-model="user.age" /></td>
+          <td>
+            <input type="text" v-model="user.age" /><br /><small
+              v-if="error.age"
+              style="color: red"
+              >age requried</small
+            >
+          </td>
           <td>gender</td>
-          <td><input type="text" v-model="user.gender" /></td>
+          <td>
+            <Select2
+              v-model="user.gender"
+              :options="ajaxOptions"
+              :settings="{ placeholder: 'Gender', width: '100%', ajax: ajax }"
+            /><br /><small v-if="error.gender" style="color: red">gender requried</small>
+          </td>
           <td>email</td>
-          <td><input type="text" v-model="user.email" /></td>
+          <td>
+            <input type="email" v-model="user.email" /> <br /><small
+              v-if="error.email"
+              style="color: red"
+              >email requried</small
+            >
+          </td>
           <td>phone</td>
-          <td><input type="text" v-model="user.phone" /></td>
+          <td>
+            <input type="text" v-model="user.phone" /> <br /><small
+              v-if="error.phone"
+              style="color: red"
+              >phone requried</small
+            >
+          </td>
         </tr>
         <tr>
           <td colspan="3">
@@ -80,13 +122,79 @@ export default {
   },
   data() {
     return {
-      user: {},
+      user: {
+        firstName: "",
+        lastName: "",
+        maidenName: "",
+        age: "",
+        gender: "",
+        email: "",
+        phone: "",
+      },
       users: [],
       action: "",
       ajaxOptions: ["male", "female"],
+      error: [],
     };
   },
   methods: {
+    validate() {
+      if (this.user.firstName == "") {
+        this.error.firstName = true;
+        this.error.hasError = true;
+      } else {
+        this.error.firstName = false;
+        this.error.hasError = false;
+      }
+      if (this.user.lastName == "") {
+        this.error.lastName = true;
+        this.error.hasError = true;
+      } else {
+        this.error.lastName = false;
+        this.error.hasError = false;
+      }
+      if (this.user.maidenName == "") {
+        this.error.maidenName = true;
+        this.error.hasError = true;
+      } else {
+        this.error.maidenName = false;
+        this.error.hasError = false;
+      }
+      if (this.user.age == "") {
+        this.error.age = true;
+        this.error.hasError = true;
+      } else {
+        this.error.age = false;
+        this.error.hasError = false;
+      }
+      if (this.user.gender == "") {
+        this.error.gender = true;
+        this.error.hasError = true;
+      } else {
+        this.error.gender = false;
+        this.error.hasError = false;
+      }
+
+      if (this.user.email == "") {
+        this.error.email = true;
+        this.error.hasError = true;
+      } else {
+        this.error.email = false;
+        this.error.hasError = false;
+      }
+      if (this.user.phone == "") {
+        this.error.phone = true;
+        this.error.hasError = true;
+      } else {
+        this.error.phone = false;
+        this.error.hasError = false;
+      }
+      if (this.error.hasError == true) {
+        return true;
+      }
+      return false;
+    },
+
     getUsers() {
       axios
         .get("https://dummyjson.com/users")
@@ -97,7 +205,9 @@ export default {
           console.log(err);
         });
     },
+
     addUser() {
+      if (this.validate()) return false;
       axios
         .post("https://dummyjson.com/users/add", {
           ...this.user,
@@ -109,11 +219,14 @@ export default {
           console.log(err);
         });
     },
+
     editUser(user) {
       this.user = user;
       this.action = "edit";
     },
+
     updateUser() {
+      if (this.validate()) return false;
       axios
         .put("https://dummyjson.com/users/" + this.user.id, {
           ...this.user,
@@ -127,11 +240,21 @@ export default {
           console.log(err);
         });
     },
+
     deleteUser(user) {
       if (confirm("Sure to delete?")) {
-        this.users = this.users.filter((prd) => {
-          return prd.id !== user.id;
-        });
+        axios
+          .delete("https://dummyjson.com/users/" + user.id, {
+            ...this.user,
+          })
+          .then(() => {
+            this.users = this.users.filter((prd) => {
+              return prd.id !== user.id;
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     },
   },

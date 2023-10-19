@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a v-bind:href="url">Link</a><br />
+    <a :href="url">Link</a><br />
     <a href="url">Another link</a><br />
     <div v-html="html"></div>
     <br />
@@ -8,12 +8,12 @@
     <span v-if="condition">Condition is true</span>
     <span v-else>Condition is false</span><br />
     <span v-show="condition">show if true</span>
-    <div v-for="(item, index) in items" v-bind:key="index">
+    <div v-for="(item, index) in items" :key="index">
       {{ item }}
     </div>
-    <button type="button" v-on:click="click()">Click</button>
-    <input type="text" v-on:keypress.enter="keypress" />
-    {{ isImportant }}
+    <button type="button" v-on:click="click()">Click</button><br />
+    Press enter here:<input type="text" v-on:keypress.enter="keypress()" /><br />
+    Important?:{{ isImportant }}
     <br />
     Watch changes in this box<input v-model="rangeVal" />
   </div>
